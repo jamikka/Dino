@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dino", "Dino\Dino\Dino.csproj", "{1983F64B-BD37-4B7F-BB5F-1C4FCF195CE8}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "DinoContent", "Dino\DinoContent\DinoContent.contentproj", "{8AFD335F-F1FB-45F5-92A2-76C6C8619A05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1983F64B-BD37-4B7F-BB5F-1C4FCF195CE8}.Debug|x86.ActiveCfg = Debug|x86
+		{1983F64B-BD37-4B7F-BB5F-1C4FCF195CE8}.Debug|x86.Build.0 = Debug|x86
+		{1983F64B-BD37-4B7F-BB5F-1C4FCF195CE8}.Release|x86.ActiveCfg = Release|x86
+		{1983F64B-BD37-4B7F-BB5F-1C4FCF195CE8}.Release|x86.Build.0 = Release|x86
+		{8AFD335F-F1FB-45F5-92A2-76C6C8619A05}.Debug|x86.ActiveCfg = Debug|x86
+		{8AFD335F-F1FB-45F5-92A2-76C6C8619A05}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
