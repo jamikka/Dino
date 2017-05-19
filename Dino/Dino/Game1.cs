@@ -29,6 +29,7 @@ namespace Dino
 	public class Game1 : Microsoft.Xna.Framework.Game
 	{
 		public static Game1 CurrentGame;
+		public static GraphicsDevice gD;
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 		public Texture2D tile1;
@@ -58,11 +59,11 @@ namespace Dino
 		public static List<Nest> activePlayerNests;
 		//public static Nest activePlayerNest;
 
-		//RenderTarget2D rt;
-		//Effect fct;
-		//Texture2D colorTex;
-		//Vector4 fctColor;
-		//float fctRed;
+		RenderTarget2D mainTarget;
+		RenderTarget2D lightsTarget;
+		Effect fct;
+		Texture2D lightMask;
+		Vector2 lightMaskOrigin;
 
 		public Game1()
 		{
@@ -98,6 +99,7 @@ namespace Dino
 		protected override void LoadContent()
 		{
 			CurrentGame = this;
+			gD = GraphicsDevice;
 
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			font = Content.Load<SpriteFont>("Testfont");
@@ -129,10 +131,12 @@ namespace Dino
 
 			SwitchTurn(0);
 
-			//fct = Content.Load<Effect>("Shaders");
-			//PresentationParameters pp = GraphicsDevice.PresentationParameters;
-			//SurfaceFormat format = pp.BackBufferFormat;
-			//rt = new RenderTarget2D(GraphicsDevice, 500, 500, false, format, DepthFormat.None);
+			lightMask = Content.Load<Texture2D>("lightMask");
+			lightMaskOrigin = new Vector2(lightMask.Width * 0.5f, lightMask.Height * 0.5f);
+			fct = Content.Load<Effect>("Shaders");
+			PresentationParameters pp = GraphicsDevice.PresentationParameters;
+			mainTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
+			lightsTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
 		}
 
 		public static void SwitchTurn(int playerIndex)
@@ -176,7 +180,7 @@ namespace Dino
 			InputManager.Update(Mouse.GetState(), Keyboard.GetState());
 			activePlayer.Update();
 
-			//mousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+			mousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 
 			base.Update(gameTime);
 		}
@@ -187,33 +191,70 @@ namespace Dino
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+			GraphicsDevice.SetRenderTarget(lightsTarget);
 			GraphicsDevice.Clear(Color.Black);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+			spriteBatch.Draw(lightMask, mousePos - lightMaskOrigin, Color.White);
+			spriteBatch.Draw(lightMask, activeObj.ScreenLocation - lightMaskOrigin, Color.White);
+			//for (int i = 0; i < activePlayerObjs.Count; i++)
+			//{
+			//    spriteBatch.Draw(lightMask, activePlayerObjs[i].ScreenLocation - lightMaskOrigin, Color.White);
+			//}
+			spriteBatch.End();
 
+
+			GraphicsDevice.SetRenderTarget(mainTarget);
+			GraphicsDevice.Clear(Color.Black);
+			spriteBatch.Begin();
 
 			CurrentMap.MapDraw(spriteBatch);
 
-			HUD.HUDDraw(spriteBatch);
-
-			//fct.CurrentTechnique.Passes[0].Apply();
+			//HUD.HUDDraw(spriteBatch);
 
 			for (int i = 0; i < Players.Length; i++)
 				Players[i].PlayerDraw(spriteBatch);
 
-			spriteBatch.DrawString(font, activePlayer.MovementPoints.ToString(), new Vector2(1100, 100), Color.Orange);
-
-
-			Color turnColor;
-			if (activePlayer == Players[0])
-				turnColor = Color.Tomato;
-			else
-				turnColor = Color.Turquoise;
-			spriteBatch.DrawString(font, "Turn " + TurnCounter, new Vector2(GraphicsDevice.Viewport.Width * 0.6f, 20), turnColor);
-
-
 			//spriteBatch.DrawString(font, mousePos.ToString(), mousePos, Color.Tan);
 
 			spriteBatch.End();
+
+
+			GraphicsDevice.SetRenderTarget(null);
+			GraphicsDevice.Clear(Color.Black);
+			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+			HUD.HUDDraw(spriteBatch);
+			fct.Parameters["lightMask"].SetValue(lightsTarget);
+			fct.CurrentTechnique.Passes[0].Apply();
+			spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
+			spriteBatch.End();
+
+			//spriteBatch.Begin();
+			//GraphicsDevice.Clear(Color.Black);
+
+			//CurrentMap.MapDraw(spriteBatch);
+
+			//HUD.HUDDraw(spriteBatch);
+
+			////fct.CurrentTechnique.Passes[0].Apply();
+
+			//for (int i = 0; i < Players.Length; i++)
+			//    Players[i].PlayerDraw(spriteBatch);
+
+			//spriteBatch.DrawString(font, activePlayer.MovementPoints.ToString(), new Vector2(1100, 100), Color.Orange);
+
+
+			//Color turnColor;
+			//if (activePlayer == Players[0])
+			//    turnColor = Color.Tomato;
+			//else
+			//    turnColor = Color.Turquoise;
+			//spriteBatch.DrawString(font, "Turn " + TurnCounter, new Vector2(GraphicsDevice.Viewport.Width * 0.6f, 20), turnColor);
+
+
+			////spriteBatch.DrawString(font, mousePos.ToString(), mousePos, Color.Tan);
+
+			//spriteBatch.End();
+
 			base.Draw(gameTime);
 		}
 	}

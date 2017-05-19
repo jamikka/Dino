@@ -31,6 +31,7 @@ namespace Dino
 			Game1.activeObj = newNest;
 			//Game1.activePlayerNest = newNest;
 			Game1.activePlayerDinos.Remove(this);
+			Game1.activePlayerObjs.Remove(this);
 			ParentPlayer.SettlerDinos.Remove(this);
 
 			Tile currentTile = Game1.CurrentMap[MapCoord];

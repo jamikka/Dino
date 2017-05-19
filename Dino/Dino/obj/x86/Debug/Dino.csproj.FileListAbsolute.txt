@@ -17,3 +17,4 @@ D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\testNest.xnb
 D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\TerritoryBorderNW1.xnb
 D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\ball-5x5.xnb
 D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\Shaders.xnb
+D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\lightmask.xnb

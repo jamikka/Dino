@@ -116,7 +116,16 @@
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
       <Output>D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\Shaders.xnb</Output>
-      <Time>2017-05-14T12:34:45.297936+03:00</Time>
+      <Time>2017-05-19T16:41:50.5390303+03:00</Time>
+    </Item>
+    <Item>
+      <Source>lightmask.png</Source>
+      <Name>lightmask</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>D:\Documents\CisKood\Dino\Dino\Dino\bin\x86\Debug\Content\lightmask.xnb</Output>
+      <Time>2017-05-18T15:58:57.4853203+03:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
