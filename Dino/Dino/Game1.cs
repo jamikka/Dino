@@ -58,6 +58,7 @@ namespace Dino
 		//public static Dino activePlayerDino;
 		public static List<Nest> activePlayerNests;
 		//public static Nest activePlayerNest;
+		int fctMode;
 
 		RenderTarget2D mainTarget;
 		RenderTarget2D lightsTarget;
@@ -182,6 +183,28 @@ namespace Dino
 
 			mousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
 
+			if (Keyboard.GetState().IsKeyDown(Keys.Q) && prevKeyboard.IsKeyUp(Keys.Q))
+			{
+				if (fctMode == 1)
+					fctMode = 0;
+				else
+					fctMode++;
+			}
+
+			if (Keyboard.GetState().IsKeyDown(Keys.E) && prevKeyboard.IsKeyUp(Keys.E))
+			{
+				float currValue = fct.Parameters["blurSizeX"].GetValueSingle();
+				fct.Parameters["blurSizeX"].SetValue(currValue - 0.0005f);
+				fct.Parameters["blurSizeY"].SetValue(currValue - 0.0005f);
+			}
+			if (Keyboard.GetState().IsKeyDown(Keys.R) && prevKeyboard.IsKeyUp(Keys.R))
+			{
+				float currValue = fct.Parameters["blurSizeX"].GetValueSingle();
+				fct.Parameters["blurSizeX"].SetValue(currValue + 0.0005f);
+				fct.Parameters["blurSizeY"].SetValue(currValue + 0.0005f);
+			}
+
+			prevKeyboard = Keyboard.GetState();
 			base.Update(gameTime);
 		}
 
@@ -191,43 +214,102 @@ namespace Dino
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
-			GraphicsDevice.SetRenderTarget(lightsTarget);
-			GraphicsDevice.Clear(Color.Black);
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
-			spriteBatch.Draw(lightMask, mousePos - lightMaskOrigin, Color.White);
-			spriteBatch.Draw(lightMask, activeObj.ScreenLocation - lightMaskOrigin, Color.White);
-			//for (int i = 0; i < activePlayerObjs.Count; i++)
-			//{
-			//    spriteBatch.Draw(lightMask, activePlayerObjs[i].ScreenLocation - lightMaskOrigin, Color.White);
-			//}
-			spriteBatch.End();
+			if (fctMode == 0)
+			{
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin();
+
+				CurrentMap.MapDraw(spriteBatch);
+
+				HUD.HUDDraw(spriteBatch);
+
+				for (int i = 0; i < Players.Length; i++)
+					Players[i].PlayerDraw(spriteBatch);
+
+				spriteBatch.End();
+			}
+			else if (fctMode == 2)
+			{
+				GraphicsDevice.SetRenderTarget(lightsTarget);
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+				spriteBatch.Draw(lightMask, mousePos - lightMaskOrigin, Color.White);
+				spriteBatch.Draw(lightMask, activeObj.ScreenLocation - lightMaskOrigin, Color.White);
+				//for (int i = 0; i < activePlayerObjs.Count; i++)
+				//{
+				//    spriteBatch.Draw(lightMask, activePlayerObjs[i].ScreenLocation - lightMaskOrigin, Color.White);
+				//}
+				spriteBatch.End();
 
 
-			GraphicsDevice.SetRenderTarget(mainTarget);
-			GraphicsDevice.Clear(Color.Black);
-			spriteBatch.Begin();
+				GraphicsDevice.SetRenderTarget(mainTarget);
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin();
 
-			CurrentMap.MapDraw(spriteBatch);
+				CurrentMap.MapDraw(spriteBatch);
 
-			//HUD.HUDDraw(spriteBatch);
+				//HUD.HUDDraw(spriteBatch);
 
-			for (int i = 0; i < Players.Length; i++)
-				Players[i].PlayerDraw(spriteBatch);
+				for (int i = 0; i < Players.Length; i++)
+					Players[i].PlayerDraw(spriteBatch);
 
-			//spriteBatch.DrawString(font, mousePos.ToString(), mousePos, Color.Tan);
+				//spriteBatch.DrawString(font, mousePos.ToString(), mousePos, Color.Tan);
 
-			spriteBatch.End();
+				spriteBatch.End();
 
 
-			GraphicsDevice.SetRenderTarget(null);
-			GraphicsDevice.Clear(Color.Black);
-			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
-			HUD.HUDDraw(spriteBatch);
-			fct.Parameters["lightMask"].SetValue(lightsTarget);
-			fct.CurrentTechnique.Passes[0].Apply();
-			spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
-			spriteBatch.End();
+				GraphicsDevice.SetRenderTarget(null);
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+				HUD.HUDDraw(spriteBatch);
+				fct.CurrentTechnique = fct.Techniques[0];
+				fct.Parameters["lightMask"].SetValue(lightsTarget);
+				fct.CurrentTechnique.Passes[0].Apply();
+				spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
+				spriteBatch.End();
+			}
+			else if (fctMode == 1)
+			{
+				fct.CurrentTechnique = fct.Techniques[1];
 
+				GraphicsDevice.SetRenderTarget(mainTarget);
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin();
+				//CurrentMap.MapDraw(spriteBatch);
+				//HUD.HUDDraw(spriteBatch);
+				if (activeObj is Dino)
+				{
+					Dino curDin = (Dino)activeObj;
+					curDin.DinoDraw(spriteBatch);
+				}
+				else
+					activeObj.ObjDraw(spriteBatch);
+				spriteBatch.End();
+
+				GraphicsDevice.SetRenderTarget(lightsTarget);
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+				fct.CurrentTechnique = fct.Techniques[1];
+				fct.CurrentTechnique.Passes[0].Apply();
+				spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
+				spriteBatch.End();
+
+				GraphicsDevice.SetRenderTarget(null);
+				GraphicsDevice.Clear(Color.Black);
+				spriteBatch.Begin();
+				CurrentMap.MapDraw(spriteBatch);
+				HUD.HUDDraw(spriteBatch);
+				spriteBatch.End();
+				spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+				fct.CurrentTechnique.Passes[1].Apply();
+				spriteBatch.Draw(lightsTarget, Vector2.Zero, Color.White);
+				spriteBatch.End();
+				spriteBatch.Begin();
+				for (int i = 0; i < Players.Length; i++)
+					Players[i].PlayerDraw(spriteBatch);
+				spriteBatch.End();
+				
+			}
 			//spriteBatch.Begin();
 			//GraphicsDevice.Clear(Color.Black);
 

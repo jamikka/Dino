@@ -83,7 +83,7 @@ namespace Dino
 				//sb.DrawString(Game1.font, num.ToString(), Tiles[i].ScreenCoord + new Vector2(50,50), Color.White);
 				//num++;
 			}
-			sb.Draw(HUD.ActivePlayerObjCircle, Game1.activeObj.ScreenLocation, null, Color.White, 0, HUD.ObjCircleOrigin, 1, SpriteEffects.None, 0);
+			//sb.Draw(HUD.ActivePlayerObjCircle, Game1.activeObj.ScreenLocation, null, Color.White, 0, HUD.ObjCircleOrigin, 1, SpriteEffects.None, 0);
 		}
 	}
 }
