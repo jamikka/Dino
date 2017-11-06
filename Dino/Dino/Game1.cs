@@ -28,38 +28,46 @@ namespace Dino
 	/// </summary>
 	public class Game1 : Microsoft.Xna.Framework.Game
 	{
-		public static Game1 CurrentGame;
-		public static GraphicsDevice gD;
-		GraphicsDeviceManager graphics;
-		SpriteBatch spriteBatch;
+		// ---- DECLARE - NIMETÄÄN GLOBAALIT MUUTTUJAT ----
+		
+		// Tekstuurit ja fontti
 		public Texture2D tile1;
 		public Texture2D tile2;
 		public static Texture2D TerritoryBall;
-		public static Map CurrentMap;
-		public static int tileHalfWidth;
-		public static int tileHalfHeight;
-		public static int mapHalfHeight;
-		public static SpriteFont font;
 		public static Texture2D ScoutDinoTex;
 		public static Texture2D SettlerDinoTex;
 		public static Texture2D NestTex;
-		public static Player[] Players;
+		public static SpriteFont font;
+
+		// Inputmuuttujat
 		public static KeyboardState keyboard;
 		public static KeyboardState prevKeyboard;
 		public static MouseState mouse;
 		public static MouseState prevMouse;
 		public static Vector2 mousePos;
 
-		public static int TurnCounter;
+		// Muut
+		public static Game1 CurrentGame;
+		public static Player[] Players;
+		public static Map CurrentMap;
 		public static Player activePlayer;
 		public static List<PlayerObject> activePlayerObjs;
 		public static PlayerObject activeObj;
 		public static List<Dino> activePlayerDinos;
-		//public static Dino activePlayerDino;
 		public static List<Nest> activePlayerNests;
-		//public static Nest activePlayerNest;
-		int fctMode;
 
+		public static int TurnCounter;
+		public static int tileHalfWidth;
+		public static int tileHalfHeight;
+		public static int mapHalfHeight;
+
+		// Grafiikkamuuttujat piirtofunktioihin
+		public static GraphicsDevice gD;
+		GraphicsDeviceManager graphics;
+		SpriteBatch spriteBatch;
+
+		// Efektimuuttujat
+		int fctMode;
 		RenderTarget2D mainTarget;
 		RenderTarget2D lightsTarget;
 		Effect fct;
@@ -68,6 +76,7 @@ namespace Dino
 
 		public Game1()
 		{
+			// ---- ASETETAAN PELIN ASETUKSET ----
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			graphics.PreferredBackBufferWidth = 1600;
@@ -83,6 +92,7 @@ namespace Dino
 		/// </summary>
 		protected override void Initialize()
 		{
+			// ---- SYNNYTETÄÄN NUMEERISET MUUTTUJAT ----
 			CurrentMap = new Map(new int[13, 13], Content);
 			CurrentMap.Layout[0,5] = 1;
 			CurrentMap.Layout[2, 11] = 1;
@@ -99,9 +109,11 @@ namespace Dino
 		/// </summary>
 		protected override void LoadContent()
 		{
+			// ---- SYNNYTETÄÄN KAIKKI MUU ----
 			CurrentGame = this;
 			gD = GraphicsDevice;
 
+			// TEKSTUURIEN LATAUS
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			font = Content.Load<SpriteFont>("Testfont");
 			ScoutDinoTex = Content.Load<Texture2D>("scoutDinoSprSh");
@@ -111,11 +123,13 @@ namespace Dino
 			NestTex = Content.Load<Texture2D>("testNest");
 			TerritoryBall = Content.Load<Texture2D>("ball-5x5");
 
+			// SYNNYTETÄÄN MAPPIDIMENSIOT LADATTUJEN TEKSTUURIEN POHJALTA
 			tileHalfWidth = CurrentMap.tile1.Width / 2-1;
 			tileHalfHeight = CurrentMap.tile1.Height / 2 - 4;
 			mapHalfHeight = tileHalfHeight * CurrentMap.Layout.GetUpperBound(0);
 			CurrentMap.MakeMap();
 
+			// Pelaajien ja niiden dinojen synnytys
 			Players[0] = new Player();
 			Players[1] = new Player();
 			activePlayer = Players[0];
@@ -130,8 +144,10 @@ namespace Dino
 			Players[1].SettlerDinos.Add(new SettlerDino(Players[1], new Point(11, 1)));
 			Players[1].SettlerDinos.Add(new SettlerDino(Players[1], new Point(12, 2)));
 
+			// On tässä, jotta activePlayerobj asetetaan pelin alkuun
 			SwitchTurn(0);
 
+			// Efektimuuttujien synnytys
 			lightMask = Content.Load<Texture2D>("lightMask");
 			lightMaskOrigin = new Vector2(lightMask.Width * 0.5f, lightMask.Height * 0.5f);
 			fct = Content.Load<Effect>("Shaders");
@@ -178,11 +194,11 @@ namespace Dino
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
-			InputManager.Update(Mouse.GetState(), Keyboard.GetState());
-			activePlayer.Update();
+			InputManager.Update(Mouse.GetState(), Keyboard.GetState()); // Luetaan kaikki framessa tapahtuvat inputit ja lähetetään käskyt eteenpäin
+			activePlayer.Update(); // Päivitetään pelaajan objektit
+			// vilja: Jospa inputmanager loisi listan inputeista, joka lähetettäisi eteenpäin toteuttajalle? (jami selvittää eventpohjaistuksen vaatimukset)
 
-			mousePos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-
+			#region EFEKTIPÄIVITYKSET
 			if (Keyboard.GetState().IsKeyDown(Keys.Q) && prevKeyboard.IsKeyUp(Keys.Q))
 			{
 				if (fctMode == 1)
@@ -203,8 +219,10 @@ namespace Dino
 				fct.Parameters["blurSizeX"].SetValue(currValue + 0.0005f);
 				fct.Parameters["blurSizeY"].SetValue(currValue + 0.0005f);
 			}
+			#endregion
 
-			prevKeyboard = Keyboard.GetState();
+			//
+			prevKeyboard = Keyboard.GetState(); // siirrä inputmanageriin
 			base.Update(gameTime);
 		}
 
@@ -216,7 +234,7 @@ namespace Dino
 		{
 			if (fctMode == 0)
 			{
-				GraphicsDevice.Clear(Color.Black);
+				GraphicsDevice.Clear(Color.Black); // Taustaväri
 				spriteBatch.Begin();
 
 				CurrentMap.MapDraw(spriteBatch);

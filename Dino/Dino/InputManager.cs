@@ -15,7 +15,7 @@ namespace Dino
 
 		public static void Update(MouseState mouse, KeyboardState keyboard)
 		{
-			Vector2 mousePos = new Vector2(mouse.X, mouse.Y);
+			Game1.mousePos = new Vector2(mouse.X, mouse.Y);
 
 			Keys justPressedKey = Keys.None;
 			if (keyboard.GetPressedKeys().Length > 0)
@@ -24,16 +24,17 @@ namespace Dino
 					justPressedKey = keyboard.GetPressedKeys()[0];
 			}
 
+			// Click-select
 			for (int i = 0; i < Game1.activePlayerObjs.Count; i++)
 			{
-				if (Vector2.Distance(mousePos, Game1.activePlayerObjs[i].ScreenLocation) < 45)
+				if (Vector2.Distance(Game1.mousePos, Game1.activePlayerObjs[i].ScreenLocation) < 45)
 				{
 					if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
 						Game1.activeObj = Game1.activePlayerObjs[i];
 				}
 			}
 
-			if (justPressedKey != Keys.None)
+			if (justPressedKey != Keys.None) // ------------- KEY PRESSED -----------
 			{
 				if (justPressedKey == Keys.Escape) // Exit
 					Game1.CurrentGame.Exit();
@@ -69,6 +70,8 @@ namespace Dino
 							i++;
 						Game1.activeObj = Game1.activePlayerNests[i];
 					}
+
+					//int i = Game1.activePlayerObjs.IndexOf(Game1.activeObj);
 				}
 
 				if (Game1.activeObj is Dino) // Dino movement
