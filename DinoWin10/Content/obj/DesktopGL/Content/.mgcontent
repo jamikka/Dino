@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/ball-5x5.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/lightmask.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/PondTree.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/scoutDinoSprSh.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/SelectRing.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/SettlerDinoTex1.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/Shaders.fx</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/Testfont.spritefont</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/TesTileSided2.png</File>
+    <File>C:/J/Kood/DinoWin10/DinoWin10/Content/testNest.png</File>
+  </SourceFiles>
+</SourceFileCollection>
